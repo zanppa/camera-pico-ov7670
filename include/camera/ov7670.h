@@ -294,6 +294,8 @@ typedef struct {
 
 #define OV7670_REG_LAST OV7670_REG_SATCTR //< Maximum register address
 
+#define OV7670_PID_VALUE    0x76
+
 // C++ ACCESSIBLE FUNCTIONS ------------------------------------------------
 
 // These are declared in an extern "C" so Arduino platform C++ code can

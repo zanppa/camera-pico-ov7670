@@ -95,14 +95,14 @@ static bool camera_detect(struct camera_platform_config *platform)
 			continue;
 		}
 
-		if (val == 0x76) {
+		if (val == OV7670_PID_VALUE) {
 			break;
 		}
 
 		sleep_ms(100);
 	}
 
-	return val == 0x76;
+	return val == OV7670_PID_VALUE;
 }
 
 int camera_init(struct camera *camera, struct camera_platform_config *params)
