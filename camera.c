@@ -249,15 +249,26 @@ static void camera_pio_configure(struct camera *camera)
 
 int camera_configure(struct camera *camera, uint32_t format, uint16_t width, uint16_t height)
 {
-	if (width != CAMERA_WIDTH_DIV8 || height != CAMERA_HEIGHT_DIV8) {
-		// TODO: Handle other sizes
+	OV7670_size frame_size = OV7670_SIZE_DIV8;
+	if (width == CAMERA_WIDTH_DIV1 && height == CAMERA_HEIGHT_DIV1) {
+		frame_size = OV7670_SIZE_DIV1;
+	} else if (width == CAMERA_WIDTH_DIV2 && height == CAMERA_HEIGHT_DIV2) {
+		frame_size = OV7670_SIZE_DIV2;
+	} else if (width == CAMERA_WIDTH_DIV4 && height == CAMERA_HEIGHT_DIV4) {
+		frame_size = OV7670_SIZE_DIV4;
+	} else if (width == CAMERA_WIDTH_DIV8 && height == CAMERA_HEIGHT_DIV8) {
+		frame_size = OV7670_SIZE_DIV8;
+	} else if (width == CAMERA_WIDTH_DIV16 && height == CAMERA_HEIGHT_DIV16) {
+		frame_size = OV7670_SIZE_DIV16;
+	} else {
+		// Unknown/not supported frame size
 		return -1;
 	}
 
 	struct camera_platform_config *platform = camera->driver_host.platform;
 
 	OV7670_set_format(platform, ov7670_colorspace_from_format(format));
-	OV7670_set_size(platform, OV7670_SIZE_DIV8);
+	OV7670_set_size(platform, frame_size);
 
 	camera->config.sm_cfgs[CAMERA_PIO_FRAME_SM] =
 		camera_pio_get_frame_sm_config(platform->pio, CAMERA_PIO_FRAME_SM, camera->frame_offset, platform->base_pin);

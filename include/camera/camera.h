@@ -13,8 +13,17 @@
 
 #include "camera/ov7670.h"
 
+// Supported image sizes
+#define CAMERA_WIDTH_DIV1  640
+#define CAMERA_HEIGHT_DIV1 480
+#define CAMERA_WIDTH_DIV2  320
+#define CAMERA_HEIGHT_DIV2 240
+#define CAMERA_WIDTH_DIV4  160
+#define CAMERA_HEIGHT_DIV4 120
 #define CAMERA_WIDTH_DIV8  80
 #define CAMERA_HEIGHT_DIV8 60
+#define CAMERA_WIDTH_DIV16  40
+#define CAMERA_HEIGHT_DIV16 30
 
 #define CAMERA_MAX_N_PLANES 3
 
