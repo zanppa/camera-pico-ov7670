@@ -3,10 +3,11 @@
 This library can be used to capture images from an OV7670 camera on the
 Raspberry Pi Pico, using PIO and DMA.
 
-It's design for use with a 74165 shift register, to convert the 8-bit parallel
-data to a 2-bit serial interface, but directly connecting the parallel data bus
-directly to the Pico would also be possible with a slight modification to
-the PIO code.
+In the [original repository](https://github.com/usedbytes/camera-pico-ov7670) 
+a 74165 shift register was used to convert the 8-bit parallel bus to a 2-bit 
+serial interface. [In a fork](https://github.com/dattran-itrvn/camera-pico-ov7670) 
+the interface was changed to support the 8-bit parallel interface directly. In 
+this repository the 8-bit parallel interface is still used.
 
 The PIO portion uses 2-4 state machines from a single PIO instance, depending
 on the number of planes in the pixel format. The PIO program(s) use 26 of the
@@ -45,7 +46,7 @@ and an integration guide, but it leaves out lots of details and there's a huge
 number of undocumented (or even reserved) registers which need to be configured
 to get a picture out of the camera.
 
-This library is using Adafruit's OV7670 driver from https://github.com/adafruit/Adafruit_OV7670.git
+This library is using [Adafruit's OV7670 driver](https://github.com/adafruit/Adafruit_OV7670.git).
 
 I'm aware that there's actually a Pico implementation in that repo, but I had
 already written most of my code before I found it. Also, the "arch" they have
@@ -63,34 +64,37 @@ The code in this repo assumes a specific wiring.
 The `base_pin` and `xclk_pin` can be specified in `camera_platform_config`,
 other pins are relative to `base_pin`.
 
-`xclk_pin` must be one of the `GPOUT` clock sources (21, 23, 24, 25).
+`xclk_pin` must be one of the `GPOUT` clock sources (GPIO numbers 21, 23, 24 or 25).
 
 The i2c bus can be connected however you like - just pass in appropriate
 functions in `camera_platform_config` (it's done this way so that the i2c
 bus can be shared amongst different devices).
 
-`PCLK` is used to latch the shift register, so it's connected to both the
-74165 and the Pico.
+The default `base_pin` is 10 in the example below.
 
-| OV7670 Module | 74165     | Pico           | Pico (`example`) |
-| ------------- | -------   | -------------- | ---------------- |
-| `SIOC`        | -         | User decision  | 1                |
-| `SIOD`        | -         | User decision  | 0                |
-| `VSYNC`       | -         | `base_pin` + 2 | 18               |
-| `HREF`        | -         | `base_pin` + 3 | 19               |
-| `PCLK`        | `SH/nLD`  | `base_pin` + 4 | 20               |
-| `XCLK`        | -         | User decision  | 21               |
-| `D7`          | `A`       | -              |                  |
-| `D6`          | `B`       | -              |                  |
-| `D5`          | `C`       | -              |                  |
-| `D4`          | `D`       | -              |                  |
-| `D3`          | `E`       | -              |                  |
-| `D2`          | `F`       | -              |                  |
-| `D1`          | `G`       | -              |                  |
-| `D0`          | `H`       | -              |                  |
-| -             | `CLK`     | `base_pin` + 1 | 17               |
-| -             | `Qh`      | `base_pin`     | 16               |
-| -             | `CLK_INH` | `GND`          |                  |
+| OV7670 Module  | Pico            | Pico (`example`) |
+| -------------- | --------------- | ---------------- |
+| `3.3V`         | `3V3(OUT)`      | `3V3(OUT)`       |
+| `GND`          | `GND`           | `GND`            |
+| `SIOC`/`SCL`   | User decision   | 1                |
+| `SIOD`/`SDA`   | User decision   | 0                |
+| `VSYNC`/`VS`   | `base_pin` + 8  | 18               |
+| `HREF`/`HS`    | `base_pin` + 9  | 19               |
+| `PCLK`         | `base_pin` + 10 | 20               |
+| `XCLK`/`MCLK`  | User decision   | 21               |
+| `D7`           | `base_pin` + 7  | 17               |
+| `D6`           | `base_pin` + 6  | 16               |
+| `D5`           | `base_pin` + 5  | 15               |
+| `D4`           | `base_pin` + 4  | 14               |
+| `D3`           | `base_pin` + 3  | 13               |
+| `D2`           | `base_pin` + 2  | 12               |
+| `D1`           | `base_pin` + 1  | 11               |
+| `D0`           | `base_pin`      | 10               |
+| `RESET`/`RST`  | User decision   | 22               |
+| `PWDN`/ `PWNN` | `GND`           | `GND`            |
+
+`PWDN` could also be connected to a GPIO so that user could 
+power down the module by writing the pin high.
 
 ## Shortcomings
 
